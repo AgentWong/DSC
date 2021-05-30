@@ -25,7 +25,7 @@ configuration xDscWebServiceRegistration
         xDscWebService PSDSCPullServer {
             Ensure                       = "Present"
             EndpointName                 = "PSDSCPullServer"
-            Port                         = 8443
+            Port                         = 8080
             PhysicalPath                 = "$env:SystemDrive\inetpub\wwwroot\PSDSCPullServer"
             CertificateThumbPrint        = $certificateThumbPrint
             ModulePath                   = "$env:PROGRAMFILES\WindowsPowerShell\DscService\Modules"
