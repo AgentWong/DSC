@@ -1,4 +1,4 @@
-configuration xDscWebServiceRegistration
+configuration DscWebServiceRegistration
 {
     param
     (
@@ -14,6 +14,7 @@ configuration xDscWebServiceRegistration
 
     Import-DSCResource -ModuleName PSDesiredStateConfiguration
     Import-DSCResource -ModuleName xPSDesiredStateConfiguration
+    Import-DSCResource -ModuleName xWebAdministration
 
     Node $NodeName
     {
@@ -33,9 +34,16 @@ configuration xDscWebServiceRegistration
             State                        = "Started"
             DependsOn                    = "[WindowsFeature]DSCServiceFeature"
             RegistrationKeyPath          = "$env:PROGRAMFILES\WindowsPowerShell\DscService"
-            AcceptSelfSignedCertificates = $true
             UseSecurityBestPractices     = $true
             Enable32BitAppOnWin64        = $false
+        }
+        xWebsite StopDefaultSite
+        {
+            Ensure = 'Present'
+            Name = 'Default Web Site'
+            State = 'Stopped'
+            PhysicalPath = 'C:\inetpub\wwwroot'
+            DependsOn = '[WindowsFeature]DSCServiceFeature'
         }
 
         File RegistrationKeyFile {
