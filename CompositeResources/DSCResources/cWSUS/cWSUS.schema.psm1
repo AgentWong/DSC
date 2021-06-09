@@ -19,13 +19,6 @@ Configuration cWSUS {
         SourcePath      = "$SourcePath\pkeyspdelete.sql"
         DestinationPath = "$DestinationPath\pkeyspdelete.sql"
     }
-    File sqlserver {
-        Ensure          = 'Present'
-        Type            = 'Directory'
-        Recurse         = $true
-        SourcePath      = "$SourcePath\Modules\SqlServer"
-        DestinationPath = 'C:\Program Files\WindowsPowerShell\Modules\SqlServer'
-    }
     Script FirstSetup {
         GetScript  = {
             #Do Nothing.
@@ -52,7 +45,7 @@ Configuration cWSUS {
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
                 -InputFile 'G:\Scripts\pkeyspdelete.sql'
         }
-        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete', '[File]sqlserver'
+        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete'
     }
     xWebAppPool wsuspool {
         Name                      = 'WsusPool'
