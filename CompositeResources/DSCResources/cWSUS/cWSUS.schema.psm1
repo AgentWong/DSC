@@ -41,9 +41,9 @@ Configuration cWSUS {
         SetScript  = {
             $Instance = '\\.\pipe\MICROSOFT##WID\tsql\query'
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
-                -InputFile 'G:\Scripts\nonclusteredindex.sql'
+                -InputFile "$DestinationPath\nonclusteredindex.sql"
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
-                -InputFile 'G:\Scripts\pkeyspdelete.sql'
+                -InputFile "$DestinationPath\pkeyspdelete.sql"
         }
         DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete'
     }

@@ -1,5 +1,5 @@
 [DSCLocalConfigurationManager()]
-configuration DSCMetaConfiguration
+configuration DSCClientNodeConfiguration
 {
     param
     (
@@ -16,9 +16,10 @@ configuration DSCMetaConfiguration
     Node $NodeName
     {
         Settings {
-            RefreshMode = 'Pull'
-            ConfigurationMode = 'ApplyAndAutoCorrect'
-            RebootNodeIfNeeded = $true
+            RefreshMode          = 'Pull'
+            ConfigurationMode    = 'ApplyAndAutoCorrect'
+            ConfigurationModeFrequencyMins = '30'
+            RebootNodeIfNeeded   = $true
             AllowModuleOverwrite = $true
         }
 
