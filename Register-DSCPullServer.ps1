@@ -21,6 +21,7 @@ configuration DSCClientNodeConfiguration
             ConfigurationModeFrequencyMins = '30'
             RebootNodeIfNeeded   = $true
             AllowModuleOverwrite = $true
+            ActionAfterReboot = 'ContinueConfiguration'
         }
 
         ConfigurationRepositoryWeb PullSrv {

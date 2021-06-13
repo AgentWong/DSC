@@ -18,8 +18,6 @@ configuration DscWebServiceConfiguration
     Import-DSCResource -ModuleName PSDesiredStateConfiguration
     Import-DSCResource -ModuleName xPSDesiredStateConfiguration
     Import-DSCResource -ModuleName xWebAdministration
-    Import-DscResource -ModuleName NetworkingDsc
-    Import-DscResource -ModuleName ComputerManagementDsc
 
     Node $NodeName
     {
@@ -43,7 +41,7 @@ configuration DscWebServiceConfiguration
             Ensure                   = 'Present'
             EndpointName             = 'PSDSCPullServer'
             Port                     = 8080
-            PhysicalPath             = "$env:SystemDrive\inetpub\wwwroot\PSDSCPullServer"
+            PhysicalPath             = "$env:SystemDrive\inetpub\PSDSCPullServer"
             CertificateThumbPrint    = $certificateThumbPrint
             ModulePath               = 'c:\PullServer\Modules'
             ConfigurationPath        = 'c:\PullServer\Configuration'
@@ -54,10 +52,6 @@ configuration DscWebServiceConfiguration
             SqlProvider              = $true
             SqlConnectionString      = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Initial Catalog=master;Persist Security Info=False;Data Source=$SqlServer;Database=DSC"
             DependsOn                = '[WindowsFeature]DSCServiceFeature', '[File]PullServerFiles'
-        }
-        PendingReboot DSCPostReboot {
-            Name = 'DSCPostReboot'
-            DependsOn = '[xDscWebService]PSDSCPullServer'
         }
         xWebsite StopDefaultSite {
             Ensure       = 'Present'
