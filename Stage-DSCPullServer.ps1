@@ -5,7 +5,7 @@ configuration DscWebServiceConfiguration
         [string[]]$NodeName = 'localhost',
 
         [ValidateNotNullOrEmpty()]
-        [string] $SqlServer,  #Try a FQDN.
+        [string] $SqlServer, #Try a FQDN.
 
         [ValidateNotNullOrEmpty()]
         [string] $certificateThumbPrint,
@@ -18,6 +18,8 @@ configuration DscWebServiceConfiguration
     Import-DSCResource -ModuleName PSDesiredStateConfiguration
     Import-DSCResource -ModuleName xPSDesiredStateConfiguration
     Import-DSCResource -ModuleName xWebAdministration
+    Import-DscResource -ModuleName NetworkingDsc
+    Import-DscResource -ModuleName ComputerManagementDsc
 
     Node $NodeName
     {
@@ -50,8 +52,12 @@ configuration DscWebServiceConfiguration
             UseSecurityBestPractices = $true
             Enable32BitAppOnWin64    = $false
             SqlProvider              = $true
-            SqlConnectionString      = "Provider=SQLOLEDB.1;Server $SqlServer;Integrated Security=SSPI;Initial Catalog=master;"
+            SqlConnectionString      = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Initial Catalog=master;Persist Security Info=False;Data Source=$SqlServer;Database=DSC"
             DependsOn                = '[WindowsFeature]DSCServiceFeature', '[File]PullServerFiles'
+        }
+        PendingReboot DSCPostReboot {
+            Name = 'DSCPostReboot'
+            DependsOn = '[xDscWebService]PSDSCPullServer'
         }
         xWebsite StopDefaultSite {
             Ensure       = 'Present'
@@ -69,9 +75,9 @@ configuration DscWebServiceConfiguration
             DependsOn       = '[File]PullServerFiles'
         }
         Environment PSModulePath {
-            Ensure = 'Present'
-            Name = 'PSModulePath'
-            Value = 'C:\PullServer\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules'
+            Ensure    = 'Present'
+            Name      = 'PSModulePath'
+            Value     = 'C:\PullServer\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules'
             DependsOn = '[xDscWebService]PSDSCPullServer'
         }
     }
