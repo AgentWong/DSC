@@ -16,7 +16,7 @@
     PrimaryUpdate =
     @{
         MaintenanceStart = Get-Date '17:00'
-        MaintenanceEnd = Get-Date '21:00'
+        MaintenanceEnd = Get-Date '23:00'
     }
     SecondaryUpdate =
     @{
