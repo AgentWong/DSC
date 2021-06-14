@@ -8,7 +8,20 @@ Configuration cWSUS {
         [String] $DestinationPath
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xWebAdministration
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xWebAdministration, UpdateServicesDsc
+    WindowsFeatureSet WSUS {
+        Name = 'UpdateServices-Services','UpdateServices-API'
+        Ensure = 'Present'
+    }
+    WindowsFeature WID {
+        Name = 'UpdateServices-WidDB'
+        Ensure = 'Present'
+        DependsOn = '[WindowsFeatureSet]WSUS'
+    }
+    UpdateServicesServer WSUSSetup {
+        Ensure = 'Present'
+        ContentDir = 'F:\WSUS'
+    }
     File nonclusteredindex {
         Ensure          = 'Present'
         SourcePath      = "$SourcePath\nonclusteredindex.sql"
@@ -41,11 +54,11 @@ Configuration cWSUS {
         SetScript  = {
             $Instance = '\\.\pipe\MICROSOFT##WID\tsql\query'
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
-                -InputFile "$DestinationPath\nonclusteredindex.sql"
+                -InputFile "$using:DestinationPath\nonclusteredindex.sql"
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
-                -InputFile "$DestinationPath\pkeyspdelete.sql"
+                -InputFile "$using:DestinationPath\pkeyspdelete.sql"
         }
-        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete'
+        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete','[UpdateServicesServer]WSUSSetup'
     }
     xWebAppPool wsuspool {
         Name                      = 'WsusPool'
@@ -55,5 +68,6 @@ Configuration cWSUS {
         pingingEnabled            = $false
         restartPrivateMemoryLimit = '0'
         restartTimeLimit          = (New-TimeSpan -Minutes 0).ToString()
+        DependsOn = '[UpdateServicesServer]WSUSSetup'
     }
 }

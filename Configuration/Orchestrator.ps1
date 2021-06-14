@@ -1,5 +1,5 @@
 Configuration SetDomain {
-    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources
+    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources, ComputerManagementDsc
     Node $AllNodes.NodeName 
     {
         Registry DirtyShutdown {
@@ -24,8 +24,8 @@ Configuration SetDomain {
     {
         Script WindowsUpdate {
             GetScript  = {
-                $Min = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-                $Max = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+                $Min = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceStart
+                $Max = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceEnd
                 $Now = Get-Date
                 if (($Now.DayOfWeek -eq $Node.MaintenanceDay) -and ($Min.TimeOfDay -le $Now.TimeOfDay) -and `
                     ($Max.TimeOfDay -ge $Now.TimeOfDay)) {
@@ -36,8 +36,8 @@ Configuration SetDomain {
                 }
             }
             TestScript = {
-                $Min = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-                $Max = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+                $Min = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceStart
+                $Max = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceEnd
                 $Now = Get-Date
                 if (($Now.DayOfWeek -eq $Node.MaintenanceDay) -and ($Min.TimeOfDay -le $Now.TimeOfDay) -and `
                     ($Max.TimeOfDay -ge $Now.TimeOfDay)) {
@@ -76,8 +76,8 @@ Configuration SetDomain {
         }
         Script WindowsUpdate {
             GetScript  = {
-                $Min = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-                $Max = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+                $Min = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceStart
+                $Max = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceEnd
                 $Now = Get-Date
                 if (($Now.DayOfWeek -eq $Node.MaintenanceDay) -and ($Min.TimeOfDay -le $Now.TimeOfDay) -and `
                     ($Max.TimeOfDay -ge $Now.TimeOfDay)) {
@@ -88,8 +88,8 @@ Configuration SetDomain {
                 }
             }
             TestScript = {
-                $Min = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-                $Max = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+                $Min = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceStart
+                $Max = Get-Date $ConfigurationData.PrimaryUpdate.MaintenanceEnd
                 $Now = Get-Date
                 if (($Now.DayOfWeek -eq $Node.MaintenanceDay) -and ($Min.TimeOfDay -le $Now.TimeOfDay) -and `
                     ($Max.TimeOfDay -ge $Now.TimeOfDay)) {

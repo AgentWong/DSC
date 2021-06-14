@@ -6,21 +6,21 @@
             MaintenanceDay = 'Tuesday'
         }
         @{
-            NodeName = 'WSUS'
+            NodeName = 'EDEN-WSUS-01'
             Role     = 'WSUS'
             UpdateSchedule = 'Primary'
-            SourcePath      = '\\ds\Software\Scripts'
-            DestinationPath = 'G:\Scripts'
+            SourcePath      = '\\FILESHARE\Share\Software\Scripts'
+            DestinationPath = 'C:\Scripts'
         }
     );
     PrimaryUpdate =
     @{
-        MaintenanceStart = Get-Date '17:00'
-        MaintenanceEnd = Get-Date '23:00'
+        MaintenanceStart = '17:00'
+        MaintenanceEnd = '23:00'
     }
     SecondaryUpdate =
     @{
-        MaintenanceStart = Get-Date '18:00'
-        MaintenanceEnd = Get-Date '22:00'
+        MaintenanceStart = '18:00'
+        MaintenanceEnd = '22:00'
     }
 }
