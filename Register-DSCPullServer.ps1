@@ -16,12 +16,12 @@ configuration DSCClientNodeConfiguration
     Node $NodeName
     {
         Settings {
-            RefreshMode          = 'Pull'
-            ConfigurationMode    = 'ApplyAndAutoCorrect'
+            RefreshMode                    = 'Pull'
+            ConfigurationMode              = 'ApplyAndAutoCorrect'
             ConfigurationModeFrequencyMins = '30'
-            RebootNodeIfNeeded   = $true
-            AllowModuleOverwrite = $true
-            ActionAfterReboot = 'ContinueConfiguration'
+            RebootNodeIfNeeded             = $true
+            AllowModuleOverwrite           = $true
+            ActionAfterReboot              = 'ContinueConfiguration'
         }
 
         ConfigurationRepositoryWeb PullSrv {
