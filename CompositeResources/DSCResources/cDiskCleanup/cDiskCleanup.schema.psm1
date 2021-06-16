@@ -32,6 +32,7 @@ Configuration cDiskCleanup {
         ActionArguments    = '/sagerun:1'
         BuiltInAccount     = 'SYSTEM'
         ScheduleType       = 'Weekly'
+        DaysOfWeek         = 'Sunday'
         WeeksInterval      = '4'
         ExecutionTimeLimit = '02:00:00'
         Enable             = $true

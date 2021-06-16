@@ -36,7 +36,16 @@ Configuration cWSUS {
     }
     Script FirstSetup {
         GetScript  = {
-            #Do Nothing.
+            $Instance = '\\.\pipe\MICROSOFT##WID\tsql\query'
+            $Indexes = Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
+                -Query "EXEC sp_helpindex 'dbo.tbLocalizedPropertyForRevision'"
+                
+            if ( $Indexes.index_name -Contains 'nclLocalizedPropertyID') {
+                return @{ 'Result' = "$true" }
+            }
+            else {
+                return @{ 'Result' = "$false" }
+            }
         }
         TestScript = {
             $Instance = '\\.\pipe\MICROSOFT##WID\tsql\query'
