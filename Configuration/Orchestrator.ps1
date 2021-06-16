@@ -12,20 +12,22 @@ Configuration SetDomain {
             ValueName = 'DirtyShutdownTime'
             Ensure    = 'Absent'
         }
+        cDiskCleanup MonthlyDiskCleanup {}
     }
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
         cWSUS ConfigWSUS {
             SourcePath      = $Node.SourcePath
             DestinationPath = $Node.DestinationPath
+            ContentDir      = $Node.ContentDir
         }
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Primary' }.NodeName 
     {
         ScheduleWU WindowsUpdate {
-            MaintenanceDay = $Node.MaintenanceDay
+            MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-            MaintenanceEnd = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+            MaintenanceEnd   = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
         }
         PendingReboot WindowsUpdateReboot {
             Name      = 'WindowsUpdateReboot'
@@ -36,15 +38,15 @@ Configuration SetDomain {
     {
         $NodeRole = $Node.Role
         WaitForAny WaitForPrimary {
-            ResourceName      = '[ScheduleWU]WindowsUpdate'
-            NodeName          = $AllNodes.Where{ ($_.Role -eq $NodeRole) -and ( $_.UpdateSchedule -eq 'Primary') }.NodeName
-            RetryCount        = '20'
-            RetryIntervalSec = '600'
+            ResourceName     = '[ScheduleWU]WindowsUpdate'
+            NodeName         = $AllNodes.Where{ ($_.Role -eq $NodeRole) -and ( $_.UpdateSchedule -eq 'Primary') }.NodeName
+            RetryCount       = '23'
+            RetryIntervalSec = '900'
         }
         ScheduleWU WindowsUpdate {
-            MaintenanceDay = $Node.MaintenanceDay
+            MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $ConfigurationData.SecondaryUpdate.MaintenanceStart
-            MaintenanceEnd = $ConfigurationData.SecondaryUpdate.MaintenanceEnd
+            MaintenanceEnd   = $ConfigurationData.SecondaryUpdate.MaintenanceEnd
         }
         PendingReboot WindowsUpdateReboot {
             Name      = 'WindowsUpdateReboot'

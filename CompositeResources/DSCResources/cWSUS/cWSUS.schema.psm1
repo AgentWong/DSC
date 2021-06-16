@@ -5,22 +5,24 @@ Configuration cWSUS {
         [String] $SourcePath,
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [String] $DestinationPath
+        [String] $DestinationPath,
+        [ValidateNotNullOrEmpty()]
+        [String] $ContentDir
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, xWebAdministration, UpdateServicesDsc
     WindowsFeatureSet WSUS {
-        Name = 'UpdateServices-Services','UpdateServices-API'
+        Name   = 'UpdateServices-Services', 'UpdateServices-API'
         Ensure = 'Present'
     }
     WindowsFeature WID {
-        Name = 'UpdateServices-WidDB'
-        Ensure = 'Present'
+        Name      = 'UpdateServices-WidDB'
+        Ensure    = 'Present'
         DependsOn = '[WindowsFeatureSet]WSUS'
     }
     UpdateServicesServer WSUSSetup {
-        Ensure = 'Present'
-        ContentDir = 'F:\WSUS'
+        Ensure     = 'Present'
+        ContentDir = $ContentDir
     }
     File nonclusteredindex {
         Ensure          = 'Present'
@@ -58,7 +60,7 @@ Configuration cWSUS {
             Invoke-SqlCmd -ServerInstance $Instance -Database 'SUSDB' `
                 -InputFile "$using:DestinationPath\pkeyspdelete.sql"
         }
-        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete','[UpdateServicesServer]WSUSSetup'
+        DependsOn  = '[File]nonclusteredindex', '[File]pkeyspdelete', '[UpdateServicesServer]WSUSSetup'
     }
     xWebAppPool wsuspool {
         Name                      = 'WsusPool'
@@ -68,6 +70,6 @@ Configuration cWSUS {
         pingingEnabled            = $false
         restartPrivateMemoryLimit = '0'
         restartTimeLimit          = (New-TimeSpan -Minutes 0).ToString()
-        DependsOn = '[UpdateServicesServer]WSUSSetup'
+        DependsOn                 = '[UpdateServicesServer]WSUSSetup'
     }
 }
