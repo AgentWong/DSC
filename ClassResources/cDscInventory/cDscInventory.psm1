@@ -37,16 +37,16 @@ class cDscInventory {
          properties.
     #>
     [cDscInventory] Get() {
-        $StartTime = (Get-Date).AddDays(-($this.DaysToCheck))
+        $StartTime = (Get-Date).AddDays( - ($this.DaysToCheck))
         $InventoryEvents = Get-WinEvent -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
             StartTime    = $StartTime
         }
-        if($InventoryEvents.Count -ne '0'){
+        if ($InventoryEvents.Count -ne '0') {
             return @{ 'InventoryExists' = "$true" }
         }
-        else{
+        else {
             return @{ 'InventoryExists' = "$false" }
         }
     }
@@ -58,6 +58,11 @@ class cDscInventory {
 
     
     [void] Set() {
+        class InventoryItem {
+            [string] $Computer
+            [string] $SoftwareName
+            [string] $Version
+        }
         $source = "DSC Inventory"
 
         if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
@@ -66,20 +71,25 @@ class cDscInventory {
         $Computer = $env:ComputerName
 
         #Gets installed 64-bit software.
+        #Gets installed 64-bit software.
         #Excludes null DisplayVersion (Microsoft patches) and DisplayVersion 1 (Hotfixes).
-        $Software = Get-ChildItem -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall" | Where-Object { ($null -ne $_.GetValue('DisplayVersion')) -and 
-            ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") }
+        $Software = (Get-ChildItem -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall").Where{ ($null -ne $_.GetValue('DisplayVersion')) `
+                -and ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') `
+                    -notlike "*Hotfix*") }
 
         #Gets installed 32-bit software.
-        $Software += Get-ChildItem -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" | Where-Object { ($null -ne $_.GetValue('DisplayVersion')) -and 
-            ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") }
+        $32BitSoftware = ( (Get-ChildItem -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall").Where{ ($null -ne $_.GetValue('DisplayVersion')) -and 
+                ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") } )
+        foreach($32Bit in $32BitSoftware){
+            $Software.Add($32Bit)
+        }
 
         $Result = foreach ($obj in $Software) {
-            [PSCustomObject]@{
-                Computer     = $Computer
-                SoftwareName = $obj.GetValue('DisplayName')
-                Version      = $obj.GetValue('DisplayVersion')
-            }
+            $InventoryItem = [InventoryItem]::new()
+            $InventoryItem.Computer     = $Computer
+            $InventoryItem.SoftwareName = $obj.GetValue('DisplayName')
+            $InventoryItem.Version      = $obj.GetValue('DisplayVersion')
+            Write-Output $InventoryItem
         }
 
         $Data = $Result | Sort-Object -Property SoftwareName | Select-Object -Property Computer, SoftwareName, Version | ConvertTo-Csv -NoTypeInformation
@@ -99,10 +109,10 @@ class cDscInventory {
             ProviderName = 'DSC Inventory'
             StartTime    = $StartTime
         }
-        if($InventoryEvents.Count -ne '0'){
+        if ($InventoryEvents.Count -ne '0') {
             return $true
         }
-        else{
+        else {
             return $false
         }
     }

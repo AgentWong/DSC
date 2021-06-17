@@ -12,7 +12,8 @@ Configuration SetDomain {
             ValueName = 'DirtyShutdownTime'
             Ensure    = 'Absent'
         }
-        cDiskCleanup MonthlyDiskCleanup {}
+        cDiskCleanup MonthlyDiskCleanup {
+        }
     }
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
@@ -25,14 +26,10 @@ Configuration SetDomain {
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Primary' }.NodeName 
     {
         $PrimaryUpdate = $ConfigurationData.PrimaryUpdate
-        ScheduleWU WindowsUpdate {
+        cScheduleWU WindowsUpdate {
             MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $PrimaryUpdate.MaintenanceStart
             MaintenanceEnd   = $PrimaryUpdate.MaintenanceEnd
-        }
-        PendingReboot WindowsUpdateReboot {
-            Name      = 'WindowsUpdateReboot'
-            DependsOn = '[ScheduleWU]WindowsUpdate'
         }
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Secondary' }.NodeName 
@@ -49,10 +46,6 @@ Configuration SetDomain {
             MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $SecondaryUpdate.MaintenanceStart
             MaintenanceEnd   = $SecondaryUpdate.MaintenanceEnd
-        }
-        PendingReboot WindowsUpdateReboot {
-            Name      = 'WindowsUpdateReboot'
-            DependsOn = '[ScheduleWU]WindowsUpdate'
         }
     }
 }
