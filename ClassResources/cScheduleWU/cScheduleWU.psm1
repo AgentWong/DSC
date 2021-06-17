@@ -51,7 +51,7 @@ class cScheduleWU {
         Install-WUUpdates -Updates $Updates
         if (Get-WUIsPendingReboot) {
             $global:DSCMachineStatus = '1'
-            Write-Verbose "Setting DSC Reboot Needed flag to $global:DSCMachineStatus."
+            Write-Verbose "Patches applied, setting DSC Reboot Needed flag to $global:DSCMachineStatus to trigger a restart."
         }
     }
 

@@ -41,10 +41,10 @@ Configuration cWSUS {
                 -Query "EXEC sp_helpindex 'dbo.tbLocalizedPropertyForRevision'"
                 
             if ( $Indexes.index_name -Contains 'nclLocalizedPropertyID') {
-                return @{ 'Result' = "$true" }
+                return @{ 'NonClusteredIndexExists' = "$true" }
             }
             else {
-                return @{ 'Result' = "$false" }
+                return @{ 'NonClusteredIndexExists' = "$false" }
             }
         }
         TestScript = {
