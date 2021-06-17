@@ -1,5 +1,5 @@
 Configuration SetDomain {
-    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources, ComputerManagementDsc, ScheduleWU
+    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources, ComputerManagementDsc, cScheduleWU
     Node $AllNodes.NodeName 
     {
         Registry DirtyShutdown {
@@ -24,10 +24,11 @@ Configuration SetDomain {
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Primary' }.NodeName 
     {
+        $PrimaryUpdate = $ConfigurationData.PrimaryUpdate
         ScheduleWU WindowsUpdate {
             MaintenanceDay   = $Node.MaintenanceDay
-            MaintenanceStart = $ConfigurationData.PrimaryUpdate.MaintenanceStart
-            MaintenanceEnd   = $ConfigurationData.PrimaryUpdate.MaintenanceEnd
+            MaintenanceStart = $PrimaryUpdate.MaintenanceStart
+            MaintenanceEnd   = $PrimaryUpdate.MaintenanceEnd
         }
         PendingReboot WindowsUpdateReboot {
             Name      = 'WindowsUpdateReboot'
@@ -36,6 +37,7 @@ Configuration SetDomain {
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Secondary' }.NodeName 
     {
+        $SecondaryUpdate = $ConfigurationData.SecondaryUpdate
         $NodeRole = $Node.Role
         WaitForAny WaitForPrimary {
             ResourceName     = '[ScheduleWU]WindowsUpdate'
@@ -43,10 +45,10 @@ Configuration SetDomain {
             RetryCount       = '23'
             RetryIntervalSec = '900'
         }
-        ScheduleWU WindowsUpdate {
+        cScheduleWU WindowsUpdate {
             MaintenanceDay   = $Node.MaintenanceDay
-            MaintenanceStart = $ConfigurationData.SecondaryUpdate.MaintenanceStart
-            MaintenanceEnd   = $ConfigurationData.SecondaryUpdate.MaintenanceEnd
+            MaintenanceStart = $SecondaryUpdate.MaintenanceStart
+            MaintenanceEnd   = $SecondaryUpdate.MaintenanceEnd
         }
         PendingReboot WindowsUpdateReboot {
             Name      = 'WindowsUpdateReboot'

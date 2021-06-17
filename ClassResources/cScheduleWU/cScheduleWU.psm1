@@ -1,15 +1,10 @@
-enum Ensure {
-    Absent
-    Present
-}
-
 <#
-   This resource manages the file in a specific path.
+   This resource will run Windows Update within a specified maintenance window.
    [DscResource()] indicates the class is a DSC resource
 #>
 
 [DscResource()]
-class ScheduleWU {
+class cScheduleWU {
     <#
        This property is a specified day when patching can occur.
 
@@ -90,7 +85,7 @@ class ScheduleWU {
         This method returns an instance of this class with the updated key
          properties.
     #>
-    [ScheduleWU] Get() {
+    [cScheduleWU] Get() {
         $Min = Get-Date $this.MaintenanceStart
         $Max = Get-Date $this.MaintenanceEnd
         $Now = Get-Date
@@ -102,4 +97,4 @@ class ScheduleWU {
             return @{ 'Result' = $true }
         }
     }
-} # This module defines a class for a DSC "FileResource" provider.
+} # This module defines a class for a DSC "cScheduleWU" provider.
