@@ -1,5 +1,5 @@
 Configuration SetDomain {
-    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources, ComputerManagementDsc, cScheduleWU
+    Import-DscResource -Module PSDesiredStateConfiguration, CompositeResources, ComputerManagementDsc, cScheduleWU, cDscInventory
     Node $AllNodes.NodeName 
     {
         Registry DirtyShutdown {
@@ -13,6 +13,9 @@ Configuration SetDomain {
             Ensure    = 'Absent'
         }
         cDiskCleanup MonthlyDiskCleanup {
+        }
+        cDscInventory MonthlySoftwareInventory {
+        InventoryExists = 'False'
         }
     }
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
@@ -46,7 +49,7 @@ Configuration SetDomain {
             MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $SecondaryUpdate.MaintenanceStart
             MaintenanceEnd   = $SecondaryUpdate.MaintenanceEnd
-            DependsOn = '[WaitForAny]WaitForPrimary'
+            DependsOn        = '[WaitForAny]WaitForPrimary'
         }
     }
 }

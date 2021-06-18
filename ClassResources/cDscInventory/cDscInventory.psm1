@@ -15,8 +15,6 @@ class cDscInventory {
 
        A DSC resource must define at least one key property.
     #>
-    [DscProperty(Key)]
-    [int] $DaysToCheck
 
     <#
        This property defines whether or not an inventory event exists within the specified period.
@@ -27,8 +25,8 @@ class cDscInventory {
        about the resource when it is present.
 
     #>
-    [DscProperty(NotConfigurable)]
-    [bool] $InventoryExists
+    [DscProperty(Key)]
+    [string] $InventoryExists
     
     <#
         This method is equivalent of the Get-TargetResource script function.
@@ -37,17 +35,33 @@ class cDscInventory {
          properties.
     #>
     [cDscInventory] Get() {
-        $StartTime = (Get-Date).AddDays( - ($this.DaysToCheck))
-        $InventoryEvents = Get-WinEvent -FilterHashtable @{
-            Logname      = 'Application'
-            ProviderName = 'DSC Inventory'
-            StartTime    = $StartTime
+        $source = "DSC Inventory"
+
+        if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
+            New-EventLog -LogName Application -Source "DSC Inventory"
         }
-        if ($InventoryEvents.Count -ne '0') {
-            return @{ 'InventoryExists' = "$true" }
+
+        $ErrorActionPreference = "Stop"
+        try {
+            $StartTime = (Get-Date).AddDays( -1)
+            $InventoryEvents = Get-WinEvent -FilterHashtable @{
+                Logname      = 'Application'
+                ProviderName = 'DSC Inventory'
+                Id           = '10001'
+                StartTime    = $StartTime
+            }
+            if ($InventoryEvents.Count -ne '0') {
+                return @{ 'InventoryExists' = "$true" }
+            }
+            else {
+                return @{ 'InventoryExists' = "$false" }
+            }
         }
-        else {
-            return @{ 'InventoryExists' = "$false" }
+        catch {
+            throw "Error occurred.  $($PSItem.Exception.Message)"
+        }
+        finally {
+            $ErrorActionPreference = "Continue"
         }
     }
 
@@ -100,7 +114,14 @@ class cDscInventory {
         is in a desired state.
     #>
     [bool] Test() {
-        $StartTime = (Get-Date).AddDays(-1)
+        $source = "DSC Inventory"
+
+        if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
+            New-EventLog -LogName Application -Source "DSC Inventory"
+        }
+
+        $ErrorActionPreference = "SilentlyContinue"
+        $StartTime = (Get-Date).AddDays( -1)
         $InventoryEvents = Get-WinEvent -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
@@ -113,6 +134,7 @@ class cDscInventory {
         else {
             return $false
         }
+        $ErrorActionPreference = "Continue"
     }
 
 } # This module defines a class for a DSC "cDscInventory" provider.
