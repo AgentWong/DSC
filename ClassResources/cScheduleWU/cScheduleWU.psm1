@@ -67,6 +67,7 @@ class cScheduleWU {
         if (($Now.DayOfWeek -eq $this.MaintenanceDay) -and ($Min.TimeOfDay -le $Now.TimeOfDay) -and `
             ($Max.TimeOfDay -ge $Now.TimeOfDay)) {
             $Updates = Start-WUScan -SearchCriteria "IsInstalled=0 AND IsHidden=0 AND IsAssigned=1"
+            Start-Process -FilePath "wuauclt.exe" -ArgumentList "/reportnow"
             if ($Updates.Count -eq '0') {
                 return $true
             }

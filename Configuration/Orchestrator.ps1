@@ -46,6 +46,7 @@ Configuration SetDomain {
             MaintenanceDay   = $Node.MaintenanceDay
             MaintenanceStart = $SecondaryUpdate.MaintenanceStart
             MaintenanceEnd   = $SecondaryUpdate.MaintenanceEnd
+            DependsOn = '[WaitForAny]WaitForPrimary'
         }
     }
 }

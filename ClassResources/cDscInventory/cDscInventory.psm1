@@ -59,7 +59,6 @@ class cDscInventory {
     
     [void] Set() {
         class InventoryItem {
-            [string] $Computer
             [string] $SoftwareName
             [string] $Version
         }
@@ -68,7 +67,6 @@ class cDscInventory {
         if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
             New-EventLog -LogName Application -Source "DSC Inventory"
         }
-        $Computer = $env:ComputerName
 
         #Gets installed 64-bit software.
         #Gets installed 64-bit software.
@@ -80,21 +78,20 @@ class cDscInventory {
         #Gets installed 32-bit software.
         $32BitSoftware = ( (Get-ChildItem -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall").Where{ ($null -ne $_.GetValue('DisplayVersion')) -and 
                 ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") } )
-        foreach($32Bit in $32BitSoftware){
+        foreach ($32Bit in $32BitSoftware) {
             $Software.Add($32Bit)
         }
 
         $Result = foreach ($obj in $Software) {
             $InventoryItem = [InventoryItem]::new()
-            $InventoryItem.Computer     = $Computer
             $InventoryItem.SoftwareName = $obj.GetValue('DisplayName')
-            $InventoryItem.Version      = $obj.GetValue('DisplayVersion')
+            $InventoryItem.Version = $obj.GetValue('DisplayVersion')
             Write-Output $InventoryItem
         }
 
-        $Data = $Result | Sort-Object -Property SoftwareName | Select-Object -Property Computer, SoftwareName, Version | ConvertTo-Csv -NoTypeInformation
+        $Data = $Result | Sort-Object -Property SoftwareName | Select-Object -Property SoftwareName, Version | ConvertTo-Json
 
-        Write-EventLog -LogName Application -Source $source -EntryType Information -EventId 12345 -Category 0 -Message $data
+        Write-EventLog -LogName Application -Source $source -EntryType Information -EventId 10001 -Category 0 -Message $Data
     }
 
     <#
