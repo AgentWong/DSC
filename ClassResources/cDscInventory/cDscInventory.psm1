@@ -104,6 +104,7 @@ class cDscInventory {
         $InventoryEvents = Get-WinEvent -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
+            Id           = '10001'
             StartTime    = $StartTime
         }
         if ($InventoryEvents.Count -ne '0') {
