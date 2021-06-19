@@ -8,8 +8,7 @@ Author: Herman Wong
 Prerequisites:
 VMWare Powercli
 
-This should need a different list and credential set for SA/DA (DC and Exchange) and standalone machines.  Domain joined computers require the domain name and a backslash before
-the username (ex: Microsoft\ladmin)
+Domain joined computers require the domain name and a backslash before the username (ex: Microsoft\ladmin)
 #>
 
 function Show-Menu
