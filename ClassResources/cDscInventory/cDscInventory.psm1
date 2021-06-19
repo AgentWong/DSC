@@ -1,12 +1,14 @@
 <#
-   This resource manages the file in a specific path.
+   This resource reads the uninstall registry keys for installed software and writes the result
+   in JSON format to a custom Windows Event log intended for vRealize Log Insight to consume.
    [DscResource()] indicates the class is a DSC resource
 #>
 
 [DscResource()]
 class cDscInventory {
+
     <#
-       This property is a specified number of days to look for an inventory event.
+       This property defines whether or not an inventory event exists within the specified period.
 
        The [DscProperty(Key)] attribute indicates the property is a
        key and its value uniquely identifies a resource instance.
@@ -15,20 +17,14 @@ class cDscInventory {
 
        A DSC resource must define at least one key property.
     #>
-
-    <#
-       This property defines whether or not an inventory event exists within the specified period.
-
-       [DscProperty(NotConfigurable)] attribute indicates the property is
-       not configurable in DSC configuration.  Properties marked this way
-       are populated by the Get() method to report additional details
-       about the resource when it is present.
-
-    #>
     [DscProperty(Key)]
     [string] $InventoryExists
     
     <#
+        Checks the Event Log to see whether a custom Event Log has been written within the
+        past 24 hours.  Log Insight only looks back up to 48 hours so a new inventory is
+        regularly kept.  It also helps to keep the inventory up-to-date.
+
         This method is equivalent of the Get-TargetResource script function.
         The implementation should use the keys to find appropriate resources.
         This method returns an instance of this class with the updated key

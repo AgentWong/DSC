@@ -19,7 +19,7 @@ class cScheduleWU {
     [string]$MaintenanceDay
 
     <#
-       This property defines the start time in UTC when the maintenance window begins.
+       This property defines the start time (local computer time) when the maintenance window begins.
 
        NOTE: This property is required because [DscProperty(Mandatory)] is
         set.
@@ -28,7 +28,7 @@ class cScheduleWU {
     [string] $MaintenanceStart
 
     <#
-       This property defines the end time in UTC when the maintenance window ends.
+       This property defines the end time (local computer time) when the maintenance window ends.
 
        [DscProperty(NotConfigurable)] attribute indicates the property is
        not configurable in DSC configuration.  Properties marked this way

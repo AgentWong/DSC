@@ -1,3 +1,8 @@
+<#
+This configuration sets optimized settings according to official Microsoft documentation on WSUS Best Practices
+and WSUS Maintenance Guide.
+#>
+
 Configuration cWSUS {
     param(
         [Parameter(Mandatory)]
