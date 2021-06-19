@@ -300,13 +300,7 @@ if($null -eq $HostCreds){
 #Checks for domain credentials by looking for a backslash, then validates it.
 #Otherwise if it doesn't have a backslash it will skip the validation.
 if($Creds.UserName -match "\\"){
-    if($Creds.UserName -like "*rsite*"){
-    #Ignores credential check for RSITE since those do not have OOBM that I am aware of.
-    $Auth = "Authenticated"
-    }
-    else{
     $Auth = Test-Cred $HostCreds
-    }
 }
 else{
     $Auth = "Authenticated"
