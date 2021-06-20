@@ -53,7 +53,7 @@ Configuration SetDomain {
         $SecondaryUpdate = $ConfigurationData.SecondaryUpdate
         $NodeRole = $Node.Role
         WaitForAny WaitForPrimary {
-            ResourceName     = '[ScheduleWU]WindowsUpdate'
+            ResourceName     = '[cScheduleWU]WindowsUpdate'
             NodeName         = $AllNodes.Where{ ($_.Role -eq $NodeRole) -and ( $_.UpdateSchedule -eq 'Primary') }.NodeName
             RetryCount       = $SecondaryUpdate.RetryCount
             RetryIntervalSec = $SecondaryUpdate.RetryIntervalSec
