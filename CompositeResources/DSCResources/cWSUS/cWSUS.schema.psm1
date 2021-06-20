@@ -28,6 +28,7 @@ Configuration cWSUS {
     UpdateServicesServer WSUSSetup {
         Ensure     = 'Present'
         ContentDir = $ContentDir
+        DependsOn = '[WindowsFeature]WID'
     }
     File nonclusteredindex {
         Ensure          = 'Present'
