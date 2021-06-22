@@ -79,7 +79,7 @@ class cDscInventory {
         $32BitSoftware = ( (Get-ChildItem -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall").Where{ ($null -ne $_.GetValue('DisplayVersion')) -and 
                 ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") } )
         foreach ($32Bit in $32BitSoftware) {
-            $Software.Add($32Bit)
+            [void]$Software.Add($32Bit)
         }
 
         $Result = foreach ($obj in $Software) {
