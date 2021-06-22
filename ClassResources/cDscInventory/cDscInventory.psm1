@@ -36,28 +36,18 @@ class cDscInventory {
         if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
             New-EventLog -LogName Application -Source "DSC Inventory"
         }
-
-        $ErrorActionPreference = "Stop"
-        try {
-            $StartTime = (Get-Date).AddDays( -1)
-            $InventoryEvents = Get-WinEvent -FilterHashtable @{
-                Logname      = 'Application'
-                ProviderName = 'DSC Inventory'
-                Id           = '10001'
-                StartTime    = $StartTime
-            }
-            if ($InventoryEvents.Count -ne '0') {
-                return @{ 'InventoryExists' = "$true" }
-            }
-            else {
-                return @{ 'InventoryExists' = "$false" }
-            }
+        $StartTime = (Get-Date).AddDays( -1)
+        $InventoryEvents = Get-WinEvent -ErrorAction 'SilentlyContinue' -FilterHashtable @{
+            Logname      = 'Application'
+            ProviderName = 'DSC Inventory'
+            Id           = '10001'
+            StartTime    = $StartTime
         }
-        catch {
-            throw "Error occurred.  $($PSItem.Exception.Message)"
+        if ($InventoryEvents.Count -ne '0') {
+            return @{ 'InventoryExists' = "$true" }
         }
-        finally {
-            $ErrorActionPreference = "Continue"
+        else {
+            return @{ 'InventoryExists' = "$false" }
         }
     }
 
@@ -89,7 +79,7 @@ class cDscInventory {
         $32BitSoftware = ( (Get-ChildItem -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall").Where{ ($null -ne $_.GetValue('DisplayVersion')) -and 
                 ($_.GetValue('DisplayVersion') -ne "1") -and ($_.GetValue('DisplayName') -notlike "*Language*") -and ($_.GetValue('DisplayName') -notlike "*Hotfix*") } )
         foreach ($32Bit in $32BitSoftware) {
-            $Software.Add($32Bit)
+            [void]$Software.Add($32Bit)
         }
 
         $Result = foreach ($obj in $Software) {
@@ -115,10 +105,8 @@ class cDscInventory {
         if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {
             New-EventLog -LogName Application -Source "DSC Inventory"
         }
-
-        $ErrorActionPreference = "SilentlyContinue"
         $StartTime = (Get-Date).AddDays( -1)
-        $InventoryEvents = Get-WinEvent -FilterHashtable @{
+        $InventoryEvents = Get-WinEvent -ErrorAction 'SilentlyContinue' -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
             Id           = '10001'
@@ -130,7 +118,6 @@ class cDscInventory {
         else {
             return $false
         }
-        $ErrorActionPreference = "Continue"
     }
 
 } # This module defines a class for a DSC "cDscInventory" provider.
