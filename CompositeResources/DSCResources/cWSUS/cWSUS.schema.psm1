@@ -5,12 +5,6 @@ and WSUS Maintenance Guide.
 
 Configuration cWSUS {
     param(
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String] $SourcePath,
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String] $DestinationPath,
         [ValidateNotNullOrEmpty()]
         [String] $ContentDir
     )

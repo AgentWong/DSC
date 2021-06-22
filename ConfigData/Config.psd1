@@ -14,8 +14,6 @@
             NodeName = 'EDEN-WSUS-01'
             Role     = 'WSUS'
             UpdateSchedule = 'Primary'
-            SourcePath      = '\\FILESHARE\Share\Software\Scripts'
-            DestinationPath = 'C:\Scripts'
             ContentDir = 'F:\WSUS'
         }
         @{

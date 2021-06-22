@@ -34,8 +34,6 @@ Configuration SetDomain {
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
         cWSUS ConfigWSUS {
-            SourcePath      = $Node.SourcePath
-            DestinationPath = $Node.DestinationPath
             ContentDir      = $Node.ContentDir
         }
     }
