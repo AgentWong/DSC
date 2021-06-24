@@ -22,19 +22,22 @@ Configuration SetDomain {
             Ensure    = 'Absent'
         }
         cDiskCleanup MonthlyDiskCleanup {
-            CleanupSet = $Node.CleanupSet
-            SkipCleanupSet = $Node.SkipCleanupSet
-            DiskCleanupDay = $Node.DiskCleanupDay
+            CleanupSet       = $Node.CleanupSet
+            SkipCleanupSet   = $Node.SkipCleanupSet
+            DiskCleanupDay   = $Node.DiskCleanupDay
             DiskCleanupStart = $Node.DiskCleanupStart
         }
         cDscInventory MonthlySoftwareInventory {
-        InventoryExists = 'False'
+            InventoryExists = 'False'
         }
     }
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
+        $WSUS = $ConfigurationData.WSUS
         cWSUS ConfigWSUS {
             ContentDir      = $Node.ContentDir
+            Classifications = $WSUS.Classifications
+            Products        = $WSUS.Products
         }
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Primary' }.NodeName 

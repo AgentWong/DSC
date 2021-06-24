@@ -45,6 +45,13 @@
             UpdateSchedule = 'Primary'
         }
     );
+    WSUS            = 
+    @{
+        Classifications = @('E6CF1350-C01B-414D-A61F-263D14D133B4', '0FA1201D-4330-4FA8-8AE9-B877473B6441', 'B4832BD8-E735-4761-8DAF-37F882276DAB', `
+                '28BC880E-0592-4CBF-8F95-C79B17911D5F', 'CD5FFD1E-E932-4E3A-BF74-18BF0B1BBD83')
+        Products        = @('Microsoft SQL Server 2019', 'Microsoft SQL Server Management Studio v18', 'Windows 10, version 1903 and later', 'Windows Admin Center', `
+                'Windows Admin Center', 'Windows Server 2019')
+    }
     PrimaryUpdate =
     @{
         MaintenanceStart = '19:00'

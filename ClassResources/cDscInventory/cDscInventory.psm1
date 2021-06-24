@@ -3,6 +3,10 @@
    in JSON format to a custom Windows Event log intended for vRealize Log Insight to consume.
    [DscResource()] indicates the class is a DSC resource
 #>
+class InventoryItem {
+    [string] $SoftwareName
+    [string] $Version
+}
 
 [DscResource()]
 class cDscInventory {
@@ -58,10 +62,6 @@ class cDscInventory {
 
     
     [void] Set() {
-        class InventoryItem {
-            [string] $SoftwareName
-            [string] $Version
-        }
         $source = "DSC Inventory"
 
         if (-not [System.Diagnostics.EventLog]::SourceExists($source)) {

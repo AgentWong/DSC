@@ -3,6 +3,16 @@
    [DscResource()] indicates the class is a DSC resource
 #>
 
+enum MaintenanceDay {
+    Sunday
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+}
+
 [DscResource()]
 class cScheduleWU {
     <#
@@ -16,7 +26,7 @@ class cScheduleWU {
        A DSC resource must define at least one key property.
     #>
     [DscProperty(Mandatory)]
-    [string]$MaintenanceDay
+    [MaintenanceDay]$MaintenanceDay
 
     <#
        This property defines the start time (local computer time) when the maintenance window begins.
