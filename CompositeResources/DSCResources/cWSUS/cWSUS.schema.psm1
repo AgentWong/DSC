@@ -4,33 +4,8 @@ and WSUS Maintenance Guide.
 #>
 
 Configuration cWSUS {
-    param(
-        [ValidateNotNullOrEmpty()]
-        [String] $ContentDir,
-        [ValidateNotNullOrEmpty()]
-        [String[]] $Classifications,
-        [ValidateNotNullOrEmpty()]
-        [String[]] $Products
-    )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xWebAdministration, UpdateServicesDsc
-    WindowsFeatureSet WSUS {
-        Name   = 'UpdateServices-Services', 'UpdateServices-API'
-        Ensure = 'Present'
-    }
-    WindowsFeature WID {
-        Name      = 'UpdateServices-WidDB'
-        Ensure    = 'Present'
-        DependsOn = '[WindowsFeatureSet]WSUS'
-    }
-    UpdateServicesServer WSUSSetup {
-        Ensure          = 'Present'
-        Languages       = 'en'
-        Classifications = $Classifications
-        Products        = $Products
-        ContentDir      = $ContentDir
-        DependsOn       = '[WindowsFeature]WID'
-    }
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xWebAdministration
     Script FirstSetup {
         GetScript  = {
             $Instance = '\\.\pipe\MICROSOFT##WID\tsql\query'
@@ -194,7 +169,7 @@ GO
                 Write-Error $_.Exception.Message
             }
         }
-        DependsOn  = '[UpdateServicesServer]WSUSSetup'
+        #DependsOn  = '[UpdateServicesServer]WSUSSetup'
     }
     xWebAppPool wsuspool {
         Name                      = 'WsusPool'
@@ -204,6 +179,6 @@ GO
         pingingEnabled            = $false
         restartPrivateMemoryLimit = '0'
         restartTimeLimit          = (New-TimeSpan -Minutes 0).ToString()
-        DependsOn                 = '[UpdateServicesServer]WSUSSetup'
+        #DependsOn                 = '[UpdateServicesServer]WSUSSetup'
     }
 }

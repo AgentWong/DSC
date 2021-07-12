@@ -33,11 +33,7 @@ Configuration SetDomain {
     }
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
-        $WSUS = $ConfigurationData.WSUS
         cWSUS ConfigWSUS {
-            ContentDir      = $Node.ContentDir
-            Classifications = $WSUS.Classifications
-            Products        = $WSUS.Products
         }
     }
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Primary' }.NodeName 
@@ -67,3 +63,7 @@ Configuration SetDomain {
         }
     }
 }
+
+SetDomain -ConfigurationData 'C:\Scripts\ConfigData\Config.psd1' -OutputPath 'C:\Configs'
+
+Read-Host -Prompt 'Script completed, check for errors.'
