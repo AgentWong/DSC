@@ -44,7 +44,7 @@ class cDscInventory {
         $InventoryEvents = Get-WinEvent -ErrorAction 'SilentlyContinue' -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
-            Id           = '10001'
+            Id           = '10002'
             StartTime    = $StartTime
         }
         if ($InventoryEvents.Count -ne '0') {
@@ -89,9 +89,13 @@ class cDscInventory {
             Write-Output $InventoryItem
         }
 
-        $Data = $Result | Sort-Object -Property SoftwareName | Select-Object -Property SoftwareName, Version | ConvertTo-Json
-
-        Write-EventLog -LogName Application -Source $source -EntryType Information -EventId 10001 -Category 0 -Message $Data
+        $FormattedResults = $Result | Sort-Object -Property SoftwareName | Select-Object -Property SoftwareName, Version
+        Write-EventLog -LogName Application -Source $source -EntryType Information -EventId 10002 -Category 0 -Message "Starting DSC Inventory."
+        foreach($FormattedResult in $FormattedResults){
+            $Data = $FormattedResult | ConvertTo-Json
+            Write-EventLog -LogName Application -Source $source -EntryType Information -EventId 10001 -Category 0 -Message $Data
+        }
+        
     }
 
     <#
@@ -109,7 +113,7 @@ class cDscInventory {
         $InventoryEvents = Get-WinEvent -ErrorAction 'SilentlyContinue' -FilterHashtable @{
             Logname      = 'Application'
             ProviderName = 'DSC Inventory'
-            Id           = '10001'
+            Id           = '10002'
             StartTime    = $StartTime
         }
         if ($InventoryEvents.Count -ne '0') {

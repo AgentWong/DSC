@@ -169,7 +169,6 @@ GO
                 Write-Error $_.Exception.Message
             }
         }
-        #DependsOn  = '[UpdateServicesServer]WSUSSetup'
     }
     xWebAppPool wsuspool {
         Name                      = 'WsusPool'
@@ -179,6 +178,5 @@ GO
         pingingEnabled            = $false
         restartPrivateMemoryLimit = '0'
         restartTimeLimit          = (New-TimeSpan -Minutes 0).ToString()
-        #DependsOn                 = '[UpdateServicesServer]WSUSSetup'
     }
 }
