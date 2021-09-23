@@ -36,14 +36,14 @@ Configuration SetDomain {
         cDscInventory MonthlySoftwareInventory {
             InventoryExists = 'False'
         }
-    }
+    } #Close All Node configs.
 
     #Implements WSUS optimized configuration as specified by Microsoft Best Practices documentation.
     Node $AllNodes.Where{ $_.Role -eq 'WSUS' }.NodeName 
     {
         cWSUS ConfigWSUS {
         }
-    }
+    } #Close WSUS Config.
 
     #Configures group membership of Event Log Readers to allow log server to query event logs
     #for forwarding to Log Insight.
@@ -54,7 +54,7 @@ Configuration SetDomain {
             Ensure    = 'Present'
             Members   = $ConfigurationData.LogServer.ComputerAccount
         }
-    }
+    } #Close Log Forward config.
 
     #Configures Windows Syslog server to receive forwarded events for Log Insight to consume.
     Node $AllNodes.Where{ $_.Role -eq 'Kiwi Syslog Server' }.NodeName 
@@ -78,7 +78,7 @@ Configuration SetDomain {
             DependsOn        = "[xWEFCollector]Enabled"
             Query            = $ConfigurationData.LogInsightQuery.Baseline
         }
-    }
+    } #Close log server config.
 
     #Implements custom configuration to patch VMs based on node assignments + role.
     #The primary node will patch first, the secondary nodes will wait for the primary node to finish patching before starting its own updates.
@@ -90,7 +90,7 @@ Configuration SetDomain {
             MaintenanceStart = $PrimaryUpdate.MaintenanceStart
             MaintenanceEnd   = $PrimaryUpdate.MaintenanceEnd
         }
-    }
+    } #Close Primary scheduled update config.
     Node $AllNodes.Where{ $_.UpdateSchedule -eq 'Secondary' }.NodeName 
     {
         $SecondaryUpdate = $ConfigurationData.SecondaryUpdate
@@ -107,9 +107,15 @@ Configuration SetDomain {
             MaintenanceEnd   = $SecondaryUpdate.MaintenanceEnd
             DependsOn        = '[WaitForAny]WaitForPrimary'
         }
-    }
+    } #Close Secondary scheduled update config.
 }
-
+Write-Host "Creating configuration .mof files."
 SetDomain -ConfigurationData 'C:\Scripts\ConfigData\Config.psd1' -OutputPath 'C:\Configs'
+
+Write-Host "Moving .mof files to C:\PullServer\Configuration\"
+Move-Item -Path 'C:\Configs\*.mof' -Destination 'C:\PullServer\Configuration\' -Force -Confirm:$false
+
+Write-Host "Creating new checksums."
+New-DscChecksum -Path 'C:\PullServer' -Force
 
 Read-Host -Prompt 'Script completed, check for errors.'
