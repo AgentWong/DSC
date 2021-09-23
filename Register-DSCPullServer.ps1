@@ -29,10 +29,5 @@ configuration DSCClientNodeConfiguration
             RegistrationKey    = $RegistrationKey
             ConfigurationNames = @($NodeName)
         }
-
-        ReportServerWeb PullSrv {
-            ServerURL       = "https://$ServerName`:8080/PSDSCPullServer.svc" # notice it is https
-            RegistrationKey = $RegistrationKey
-        }
     }
 }

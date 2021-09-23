@@ -14,7 +14,6 @@
             NodeName = 'EDEN-WSUS-01'
             Role     = 'WSUS'
             UpdateSchedule = 'Primary'
-            ContentDir = 'F:\WSUS'
         }
         @{
             NodeName = 'EDEN-DC-01'
@@ -25,12 +24,6 @@
             NodeName = 'EDEN-DC-02'
             Role = 'Domain Controller'
             UpdateSchedule = 'Secondary'
-        }
-        @{
-            NodeName = 'EDEN-FS-01'
-        }
-        @{
-            NodeName = 'EDEN-FS-02'
         }
         @{
             NodeName = 'EDEN-DSC-01'
